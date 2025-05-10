@@ -46,7 +46,7 @@
   ##  Network Configuration
   ####################################
   networking = {
-    hostName = "nixos";
+    hostName = "nixos-mac";
     enableIPv6 = false;
     networkmanager = {
       enable = true;
