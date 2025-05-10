@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SEARCH_DIRS=("$HOME/ghq")
+SESSIONIZER_FILE=".tmux-sessionizer"
+
+command -v tmux >/dev/null 2>&1 || {
+    echo "tmux not found." >&2
+    exit 1
+}
+command -v fzf >/dev/null 2>&1 || {
+    echo "fzf not found." >&2
+    exit 1
+}
+
+if [[ $# -eq 1 ]]; then
+    target_dir="$1"
+else
+    target_dir=$(
+        find "${SEARCH_DIRS[@]}" -mindepth 3 -maxdepth 3 -type d \
+            2>/dev/null | fzf --height=40% --border --prompt="Select project ▶ " \
+            --bind 'J:down,K:up'
+    ) || exit 0
+fi
+
+[[ -z "$target_dir" ]] && exit 0
+
+session_name=$(basename "$target_dir" | tr '.' '_')
+
+if [[ -f "$target_dir/$SESSIONIZER_FILE" ]]; then
+    init_cmd="source \"$target_dir/$SESSIONIZER_FILE\"; exec \$SHELL"
+elif [[ -f "$HOME/$SESSIONIZER_FILE" ]]; then
+    init_cmd="source \"$HOME/$SESSIONIZER_FILE\"; exec \$SHELL"
+else
+    init_cmd="exec \$SHELL"
+fi
+
+if [[ -n "${TMUX:-}" ]]; then
+    if tmux has-session -t "$session_name" 2>/dev/null; then
+        tmux switch-client -t "$session_name"
+    else
+        tmux new-session -ds "$session_name" -c "$target_dir" "$init_cmd"
+        tmux switch-client -t "$session_name"
+    fi
+else
+    exec tmux new-session -As "$session_name" -c "$target_dir" "$init_cmd"
+fi
