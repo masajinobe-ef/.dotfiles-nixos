@@ -12,25 +12,54 @@
       grub = {
         enable = true;
         device = "nodev";
-        efiSupport = true;
-        enableCryptodisk = true;
+        efiSupport = false;
+        enableCryptodisk = false;
         configurationLimit = 10;
         extraConfig = ''
           GRUB_DEFAULT=0
           GRUB_TIMEOUT=2
           GRUB_DISTRIBUTOR="Arch"
-          GRUB_PRELOAD_MODULES="password_pbkdf2 ext4 part_gpt part_msdos"
+          GRUB_PRELOAD_MODULES="password_pbkdf2 btrfs part_gpt part_msdos"
           GRUB_TIMEOUT_STYLE=menu
           GRUB_TERMINAL_INPUT=console
           GRUB_GFXMODE=auto
           GRUB_GFXPAYLOAD_LINUX=keep
           GRUB_DISABLE_RECOVERY=true
-          GRUB_CMDLINE_LINUX_DEFAULT="loglevel=4 mitigations=off intel_pstate=disable usbcore.autosuspend=1 intel_iommu=off nmi_watchdog=0 i915.enable_fbc=1 intel_idle.max_cstate=5 processor.max_cstate=5 zswap.enabled=1 zswap.compressor=lz4 zswap.max_pool_percent=20 zswap.zpool=zsmalloc rootfstype=ext4"
+          GRUB_CMDLINE_LINUX_DEFAULT="loglevel=4 mitigations=off intel_pstate=disable usbcore.autosuspend=1 intel_iommu=off nmi_watchdog=0 i915.enable_fbc=1 intel_idle.max_cstate=5 processor.max_cstate=5 zswap.enabled=1 zswap.compressor=lz4 zswap.max_pool_percent=20 zswap.zpool=zsmalloc rootfstype=btrfs"
           GRUB_CMDLINE_LINUX=""
         '';
       };
       efi.canTouchEfiVariables = true;
     };
+
+  fileSystems = {
+    "/" = {
+      device = "/dev/sda2";
+      fsType = "btrfs";
+      options = [ "subvol=@" "compress=zstd" "noatime" ];
+    };
+    "/home" = {
+      device = "/dev/sda2";
+      fsType = "btrfs";
+      options = [ "subvol=@home" "compress=zstd" "noatime" ];
+    };
+    "/nix" = {
+      device = "/dev/sda2";
+      fsType = "btrfs";
+      options = [ "subvol=@nix" "compress=zstd" "noatime" ];
+    };
+    "/.snapshots" = {
+      device = "/dev/sda2";
+      fsType = "btrfs";
+      options = [ "subvol=@snapshots" "noatime" ];
+    };
+    "/boot" = {
+      device = "/dev/sda1";
+      fsType = "vfat";
+    };
+  };
+
+boot.initrd.supportedFilesystems = [ "btrfs" ];
 
     # Kernel Modules
     blacklistedKernelModules = [
