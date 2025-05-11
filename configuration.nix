@@ -61,8 +61,6 @@
     initrd.kernelModules = [ "vfat" ];
   };
 
-  # Kernel parameters
-
   ###############
   # Networking
   ###############
@@ -226,15 +224,15 @@
   ###############
   # Nix Settings
   ###############
-  nix = {
-    # Allow unfree packages
-    pkgs.config.allowUnfree = true;
 
-    # Garbage Collection
-    optimise.automatic = true;
-    gc = {
-      automatic = true;
-      options = "--delete-older-than 3d";
-    };
+  # Allow unfree packages
+  nix.pkgs.config.allowUnfree = true;
+
+  # Garbage Collection
+  nix.optimise.automatic = true;
+
+  nix.gc = {
+    automatic = true;
+    options = "--delete-older-than 3d";
   };
 }
