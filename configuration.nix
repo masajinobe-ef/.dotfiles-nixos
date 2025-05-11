@@ -158,12 +158,9 @@
         Protocol = 2;
         SyslogFacility = "AUTH";
         LogLevel = "VERBOSE";
-        KexAlgorithms = [ "curve25519-sha256" ];
-        Ciphers = [ "chacha20-poly1305@openssh.com" "aes256-gcm@openssh.com" ];
-        MACs = [ "hmac-sha2-512-etm@openssh.com" ];
         PermitRootLogin = "prohibit-password";
         PubkeyAuthentication = true;
-        AuthenticationMethods = [ "publickey" ];
+        AuthenticationMethods = "publickey";
         PasswordAuthentication = false;
         PermitEmptyPasswords = false;
         UsePAM = true;
@@ -182,7 +179,7 @@
     acpid.enable = true;
 
     # Scheduled Tasks
-    cronie.enable = true;
+    #cron.enable = true;
 
     # CPU Frequency Scaling
     auto-cpufreq.enable = true;
@@ -191,7 +188,7 @@
     fstrim.enable = true;
 
     # Privilege Management
-    gnome.polkit.enable = true;
+    #gnome.polkit.enable = true;
   };
 
   ###############
@@ -226,10 +223,10 @@
   ###############
 
   # Allow unfree packages
-  nix.pkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnfree = true;
 
   # Garbage Collection
-  nix.optimise.automatic = true;
+  nix.settings.auto-optimise-store = true;
 
   nix.gc = {
     automatic = true;
