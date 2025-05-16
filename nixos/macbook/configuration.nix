@@ -40,7 +40,7 @@
 
     # Hardware-specific kernel modules
     initrd.kernelModules = [ "vfat" "i915" ];
-    
+
     # Kernel module parameters
     extraModprobeConfig = ''
       options hid_apple fnmode=2 iso_layout=1
@@ -70,8 +70,26 @@
   # ===================== Networking =====================
   networking = {
     hostName = "nixos";
-    networkmanager.enable = true;  # Use NetworkManager for networking
+    enableIPv6 = false;
+
+    # NetworkManager configuration
+    networkmanager = {
+      enable = true;
+      dns = "none";
+    };
+
+    interfaces.wlp2s0 = {
+      ipv4.addresses = [{
+        address = "192.168.0.201";
+        prefixLength = 24;
+      }];
+    };
     
+    defaultGateway = {
+      address = "192.168.0.1";
+      interface = "wlp2s0";
+    };
+
     # Firewall configuration
     firewall = {
       enable = true;
@@ -80,16 +98,47 @@
     };
   };
 
+  # DNS configuration
+  services.dnscrypt-proxy2 = {
+    enable = true;
+    settings = {
+      server_names = [ "scaleway-fr" "google" ];
+      listen_addresses = [ "127.0.0.1:53000" "[::1]:53000" ];
+      cache = true;
+    };
+  };
+
+  services.dnsmasq = {
+    enable = true;
+    settings = {
+      no-resolv = true;
+      server = [ "::1#53000" "127.0.0.1#53000" ];
+      listen-address = [ "::1" "127.0.0.1" ];
+      conf-file = "${pkgs.dnsmasq}/share/dnsmasq/trust-anchors.conf";
+      dnssec = true;
+    };
+  };
+
+  # resolv.conf configuration
+  environment.etc."resolv.conf" = {
+    text = ''
+      nameserver ::1
+      nameserver 127.0.0.1
+      options edns0 single-request-reopen
+    '';
+    mode = "0444"; # Make immutable
+  };
+
   # ===================== Regional Settings =====================
   time.timeZone = "Asia/Yekaterinburg";
-  
+
   i18n = {
     defaultLocale = "en_US.UTF-8";
     supportedLocales = [
       "en_US.UTF-8/UTF-8"
       "ru_RU.UTF-8/UTF-8"
     ];
-    
+
     extraLocaleSettings = {
       LC_ADDRESS = "en_US.UTF-8";
       LC_IDENTIFICATION = "en_US.UTF-8";
@@ -109,10 +158,10 @@
 
     # Keyboard layout configuration
     xkb = {
-      layout = "us,ru";  # English primary, Russian secondary
-      options = "grp:caps_toggle";  # Use Caps Lock for layout switching
+      layout = "us,ru";
+      options = "grp:caps_toggle";
     };
-    
+
     # Window Manager configuration
     windowManager.i3 = {
       enable = true;
@@ -135,29 +184,29 @@
   # ===================== System Packages =====================
   environment = {
     pathsToLink = [ "/libexec" ];
-    
+
     systemPackages = with pkgs; [
       # Core utilities
-      vim wget git neovim alacritty zsh
-      
+      vim wget git neovim alacritty zsh dnsmasq dnscrypt-proxy dnsutils sing-box
+
       # File management
       yazi eza fzf fd ripgrep p7zip unrar zip unzip
-      
+
       # Media handling
       imagemagick exiftool ueberzugpp yt-dlp ffmpeg
-      
+
       # System monitoring
       fastfetch btop
-      
+
       # Development tools
       tmux stow ghq tmuxp python313 docker uv gcc clang pnpm zoxide
-      
+
       # X11 utilities
       maim xdotool xclip xsel lxappearance
-      
+
       # Desktop components
       rofi dunst libnotify feh picom redshift
-      
+
       # Applications
       (google-chrome.override {
         commandLineArgs = [
@@ -167,10 +216,10 @@
         ];
       })
       mpv telegram-desktop ayugram-desktop vlc qbittorrent
-      
+
       # Hardware support
       mesa libva libva-utils libvdpau libvdpau-va-gl
-      
+
       # System utilities
       acpid auto-cpufreq brightnessctl xdg-user-dirs
     ];
@@ -186,11 +235,43 @@
 
   # ===================== System Services =====================
   services = {
-    openssh.enable = true;       # SSH server
-    acpid.enable = true;         # ACPI event handling
-    auto-cpufreq.enable = true;  # CPU frequency scaling
-    fstrim.enable = true;        # SSD trim maintenance
+
+	  openssh = {
+	    enable = true;
+	    ports = [ 33677 ];
+	    settings = {
+	      AddressFamily = "inet";
+	      Protocol = 2;
+	      SyslogFacility = "AUTH";
+	      LogLevel = "VERBOSE";
+	      KexAlgorithms = [ "curve25519-sha256" ];
+	      Ciphers = [ "chacha20-poly1305@openssh.com" "aes256-gcm@openssh.com" ];
+	      Macs = [ "hmac-sha2-512-etm@openssh.com" ];
+	      PermitRootLogin = "prohibit-password";
+	      PubkeyAuthentication = true;
+	      AuthenticationMethods = "publickey";
+	      PasswordAuthentication = false;
+	      PermitEmptyPasswords = false;
+	      UsePAM = true;
+	      LoginGraceTime = 60;
+	      MaxAuthTries = 3;
+	      ClientAliveInterval = 600;
+	      ClientAliveCountMax = 2;
+	      AllowTcpForwarding = false;
+	      X11Forwarding = false;
+	      PermitTunnel = false;
+	      Subsystem = "sftp internal-sftp";
+	    };
+	  };
+
+    acpid.enable = true;
+    auto-cpufreq.enable = true;
+    fstrim.enable = true;
+    resolved.enable = false;
   };
+
+  # Service dependencies
+  systemd.services.dnsmasq.after = [ "dnscrypt-proxy2.service" ];
 
   # ===================== Final System Settings =====================
   system.stateVersion = "24.11";  # Maintain compatibility with future updates
