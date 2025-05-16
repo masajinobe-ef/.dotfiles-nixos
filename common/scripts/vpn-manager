@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-CONFIG_FILE="$HOME/.dotfiles/personal/sing-box/temnomor.json"
+CONFIG_FILE="$HOME/.dotfiles-nixos/.dotfiles-personal/sing-box/temnomor.json"
 SERVICE_NAME="sing-box"
 LOCK_TIMEOUT=5
 

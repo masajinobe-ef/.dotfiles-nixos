@@ -109,7 +109,7 @@ export COMPOSE_BAKE=true
 # Path configuration
 typeset -U PATH path
 path=(
-    ~/.dotfiles/personal/sh
+    ~/.dotfiles-nixos/.dotfiles-personal/sh
     ~/.local/bin
     ~/.local/scripts
     ~/.local/share
