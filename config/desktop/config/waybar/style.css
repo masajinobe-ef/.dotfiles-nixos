@@ -34,7 +34,7 @@ window#waybar {
   background-color: transparent;
   color: #a9b1d6;
   border-radius: 8px;
-  min-width: 20px;
+  min-width: 10px;
 }
 #workspaces button.focused {
   color: #7aa2f7;

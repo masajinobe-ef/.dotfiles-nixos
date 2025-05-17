@@ -49,7 +49,7 @@ seat * {
 
 output * {
     mode 1920x1080@144Hz
-    bg ~/Wallpapers/pc/wallhaven-l83gly.png fill
+    #bg ~/Wallpapers/pc/wallhaven-l83gly.png fill
 }
 
 ### ======================= Key Bindings ======================= ###
