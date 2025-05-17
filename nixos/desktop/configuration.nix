@@ -1,3 +1,5 @@
+{ ... }:
+
 {
   imports = [
     ./hardware-configuration.nix
@@ -8,8 +10,8 @@
     ./wayland-sway.nix
     ./users.nix
     ./packages.nix
-    ./fonts.nix
     ./services.nix
+    ./fonts.nix
   ];
 
   system.stateVersion = "24.11";

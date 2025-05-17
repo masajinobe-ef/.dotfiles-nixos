@@ -1,3 +1,5 @@
+{ ... }:
+
 {
   services = {
     openssh = {
@@ -30,12 +32,11 @@
     dbus.enable = true;
     gvfs.enable = true;
     gnome.gnome-keyring.enable = true;
-    pipewire = {
-      enable = true;
-      alsa.enable = true;
-      pulse.enable = true;
-    };
     seatd.enable = true;
+    libinput.enable = true;
+    acpid.enable = true;
+    fstrim.enable = true;
+    pulseaudio.enable = false;
     xserver = {
       enable = true;
       displayManager = {
@@ -46,9 +47,10 @@
         defaultSession = "sway";
       };
     };
-    libinput.enable = true;
-    acpid.enable = true;
-    fstrim.enable = true;
-    pulseaudio.enable = false;
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      pulse.enable = true;
+    };
   };
 }

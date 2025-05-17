@@ -1,3 +1,5 @@
+{ ... }:
+
 {
   time.timeZone = "Asia/Yekaterinburg";
 

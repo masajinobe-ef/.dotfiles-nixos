@@ -1,3 +1,5 @@
+{ ... }:
+
 {
   users.users.masa = {
     isNormalUser = true;
