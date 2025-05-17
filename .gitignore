@@ -10,3 +10,4 @@ help.rc
 error.log
 lyrics/*
 
+hardware-configuration.nix
