@@ -64,19 +64,6 @@ tmux-sessionizer-widget() {
     zle reset-prompt
 }
 
-tmux-workflow-widget() {
-    zle clear-screen
-    tmux new-session -As WORKFLOW
-    zle reset-prompt
-}
-
-yazi-widget() {
-    zle clear-screen
-    y
-    zle clear-screen
-    zle reset-prompt
-}
-
 # Register widgets
 zle -N tmux-sessionizer-widget
 zle -N tmux-workflow-widget
@@ -84,7 +71,6 @@ zle -N yazi-widget
 
 # Key bindings
 bindkey '^F' tmux-sessionizer-widget               # Ctrl+F
-bindkey '^E' tmux-workflow-widget                  # Ctrl+E
 bindkey '^Y' yazi-widget                           # Ctrl+Y
 bindkey -s '^P' "clear; gitpush\n"                 # Ctrl+P
 
@@ -97,14 +83,7 @@ bindkey '^G' clear-screen                # Ctrl+G
 # ------------------------------------------------------------------------------
 # ENVIRONMENT VARIABLES
 # ------------------------------------------------------------------------------
-export SUDO_PROMPT="ENTER YOUR PASSWORD: "
 export TERM=$ZSH_TMUX_TERM
-export EDITOR="nvim"
-export TERMINAL="alacritty"
-export BROWSER="thorium-browser"
-export UV_LINK_MODE=copy
-export RUFF_CACHE_DIR="$HOME/.cache/ruff"
-export COMPOSE_BAKE=true
 
 # Path configuration
 typeset -U PATH path
@@ -121,6 +100,8 @@ path=(
 # ALIASES
 # ------------------------------------------------------------------------------
 alias v="nvim"
+alias sv="sudo -E nvim"
+alias svim=sv
 alias zc="source ~/.zshrc"
 alias mv="mv -vi"
 alias rm="rm -rvi"
@@ -131,25 +112,6 @@ alias l=s; alias ls=s
 alias pwdcp="pwd|tr -d '\n'|xclip -selection clipboard"
 alias untar="tar -xvvf"
 alias zz="zip -r"; alias uz="unzip"
-alias orph="yay -Rns \$(yay -Qdtq)"
-
-function mirror-update() {
-  sudo reflector \
-    --protocol https \
-    --age 72 \
-    --sort rate \
-    --latest 15 \
-    --country Germany,Russia,Netherlands \
-    --exclude '.*(lcarilla\.de|kumi\.systems|soulharsh007\.dev|unixpeople\.org).*' \
-    --download-timeout 20 \
-    --connection-timeout 10 \
-    --verbose \
-    --save /etc/pacman.d/mirrorlist
-}
-
-function grub-update() {
-  sudo grub-mkconfig -o /boot/grub/grub.cfg && \
-}
 
 # ------------------------------------------------------------------------------
 # TOOL INITIALIZATIONS

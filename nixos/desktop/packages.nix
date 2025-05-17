@@ -1,0 +1,66 @@
+{ pkgs }:
+
+{
+  environment.systemPackages = with pkgs; [
+    vim
+    wget
+    git
+    neovim
+    alacritty
+    zsh
+    dnsmasq
+    dnscrypt-proxy
+    dnsutils
+    sing-box
+    gnome-keyring
+    gnome-session
+    gnome-shell
+    gnome-control-center
+    yazi
+    eza
+    fzf
+    fd
+    ripgrep
+    p7zip
+    unrar
+    zip
+    unzip
+    imagemagick
+    exiftool
+    ueberzugpp
+    yt-dlp
+    ffmpeg
+    fastfetch
+    btop
+    tmux
+    stow
+    ghq
+    tmuxp
+    docker
+    uv
+    gcc
+    clang
+    pnpm
+    zoxide
+    nodejs
+    gnumake
+    python313
+    go
+    rustup
+    wl-clipboard
+    grim
+    slurp
+    redshift
+    mpv
+    vlc
+    ayugram-desktop
+    qbittorrent
+    google-chrome
+    firefox
+    acpid
+    xdg-utils
+    qt5.qtwayland
+    pavucontrol
+    papirus-icon-theme
+  ];
+}
