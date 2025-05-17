@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+[[ "${TRACE:-0}" == "1" ]] && set -x
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+error() {
+    echo -e "${RED}[ERROR]${NC} $1" >&2
+    exit 1
+}
+success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
+info() { echo -e "${CYAN}[INFO]${NC} $1"; }
+warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
+
+command -v git >/dev/null 2>&1 || error "Git is not installed"
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || error "Not a git repository"
+
+current_branch=$(git symbolic-ref --short HEAD 2>/dev/null) || error "Failed to get branch"
+info "Running in ${PWD} (branch: ${current_branch})"
+
+git status --short
+echo
+
+if [[ -z "$(git status --porcelain)" ]]; then
+    warning "No changes to commit"
+    exit 0
+fi
+
+default_msg="Maintenance: $(date +'%Y-%m-%d %H:%M:%S')"
+read -rp "$(echo -e "${CYAN}Commit message [${default_msg}]: ${NC}")" commit_message
+commit_message="${commit_message:-$default_msg}"
+
+info "Adding changes..."
+git add . || error "Failed to add changes"
+
+info "Committing: ${commit_message}"
+if ! git commit -am "${commit_message}"; then
+    error "Commit failed"
+fi
+success "Commit created"
+
+read -rp "$(echo -e "${YELLOW}Push to ${current_branch}? [Y/n] ${NC}")" confirm_push
+confirm_push=${confirm_push:-y}
+
+if [[ "${confirm_push,,}" =~ ^(y|yes)$ ]]; then
+    info "Pushing changes..."
+    if ! git push 2>/dev/null; then
+        warning "No upstream branch - setting one"
+        git push --set-upstream origin "${current_branch}" || error "Push failed"
+    fi
+    success "Pushed to ${current_branch}"
+else
+    warning "Changes not pushed"
+fi
