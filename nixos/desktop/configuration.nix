@@ -97,7 +97,7 @@
       swaylock
       swayidle
       waybar
-      wofi
+      rofi-wayland
       wl-clipboard
       mako
       grim
@@ -109,7 +109,7 @@
   xdg.portal = {
     enable = true;
     wlr.enable = true;
-    extraPortals = with pkgs; [ xdg-desktop-portal-gtk xdg-desktop-portal-wlr ];
+    extraPortals = with pkgs; [ xdg-desktop-portal-wlr ];
   };
 
   security = {
@@ -138,15 +138,14 @@ environment.sessionVariables = {
     CLUTTER_BACKEND = "wayland";
     NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";
-    WLR_RENDERER="vulkan";
-    SWAYSOCK="$XDG_RUNTIME_DIR/sway-ipc.$UID.$(pgrep -x sway).sock";
+    WLR_RENDERER= "vulkan";
   };
 
   # ===================== User Configuration =====================
   users.users.masa = {
     isNormalUser = true;
     description = "masa";
-    extraGroups = [ "networkmanager" "wheel" "seat" "audio" "realtime" ];
+    extraGroups = [ "networkmanager" "wheel" "seat" "audio" "realtime" "input" ];
   };
 
   # ===================== System Packages =====================
@@ -180,17 +179,10 @@ environment.sessionVariables = {
     vlc
     ayugram-desktop
     qbittorrent
-
-    (google-chrome.override {
-      commandLineArgs = [
-        "--force-device-scale-factor=0.9"
-        "--enable-features=UseOzonePlatform"
-        "--ozone-platform=wayland"
-      ];
-    })
+    google-chrome
 
     # System utilities
-    acpid xdg-user-dirs xdg-utils qt5.qtwayland
+    acpid xdg-utils qt5.qtwayland pavucontrol
 
     # Icons
     papirus-icon-theme
@@ -203,6 +195,12 @@ environment.sessionVariables = {
     noto-fonts-emoji
     nerd-fonts.jetbrains-mono
   ];
+
+  fonts.fontconfig.defaultFonts = {
+    sansSerif = [ "Noto Sans" ];
+    serif = [ "Noto Serif" ];
+    monospace = [ "JetBrains Mono Nerd Font" ];
+  };
 
   # ===================== System Services =====================
   services = {
