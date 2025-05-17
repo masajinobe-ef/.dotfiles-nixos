@@ -94,7 +94,7 @@ bindsym $mod+r layout toggle split
 
 ### ======================= Window Rules ======================= ###
 
-# Assign pplications to Workspaces
+# Assign applications to Workspaces
 assign [class="^Alacritty$"] 1
 assign [class="^Google-chrome$"] 2
 assign [class="^AyuGramDesktop$"] 3
@@ -109,7 +109,7 @@ for_window [class="^.MEGAsync$"] floating enable
 ### ======================= Autostart ======================= ###
 exec {
     alacritty -e zsh -c "tmux has-session -t WORKFLOW 2>/dev/null && tmux attach -t WORKFLOW || tmux new-session -s WORKFLOW -n 'zsh' 'zsh -i'"
-    google-chrome-stable --enable-features=UseOzonePlatform --ozone-platform=wayland
+    google-chrome-stable --force-device-scale-factor=0.9 --wm-window-animations-disabled --animation-duration-scale=0 --enable-features=UseOzonePlatform --ozone-platform=wayland
     ayugram-desktop
     sh -c "redshift"
 }
@@ -120,7 +120,8 @@ exec {
 bindsym $mod+Return exec alacritty
 
 # Browser
-bindsym $mod+w exec google-chrome-stable --enable-features=UseOzonePlatform --ozone-platform=wayland
+bindsym $mod+w exec google-chrome-stable --force-device-scale-factor=0.9 --wm-window-animations-disabled --animation-duration-scale=0 --enable-features=UseOzonePlatform --ozone-platform=wayland
+
 
 # Launcher
 bindsym $mod+e exec wofi --show drun
