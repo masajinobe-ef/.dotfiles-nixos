@@ -180,6 +180,7 @@ environment.sessionVariables = {
     ayugram-desktop
     qbittorrent
     google-chrome
+    firefox
 
     # System utilities
     acpid xdg-utils qt5.qtwayland pavucontrol
