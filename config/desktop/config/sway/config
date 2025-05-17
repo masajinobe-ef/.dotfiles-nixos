@@ -1,0 +1,156 @@
+### ======================= Sway Configuration ======================= ###
+
+# Font
+font "JetBrainsMono Nerd Font 10"
+
+# Window Borders
+default_border pixel 3
+default_floating_border none
+
+# Gaps
+gaps inner 0
+gaps outer 0
+
+# Workspaces
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws0 "0"
+
+# Mod Key (Super/Win)
+set $mod Mod1
+
+### ======================= Input/Output ======================= ###
+input * {
+    xkb_layout "us,ru"
+    xkb_options "grp:caps_toggle"
+    repeat_rate 70
+    repeat_delay 180
+    tap enabled
+    natural_scroll false
+}
+
+seat * {
+    xcursor_theme Adwaita 24
+}
+
+output * {
+    mode 1920x1080@144Hz
+}
+
+### ======================= Key Bindings ======================= ###
+# System
+bindsym $mod+Control+c swaymsg reload
+bindsym $mod+Control+r swaymsg restart
+bindsym $mod+Control+q swaymsg exit
+bindsym $mod+q swaymsg kill
+
+# Workspaces
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws0
+
+# Movement
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# Window Moving
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# Move Focusable to Workspaces
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws0
+
+# Layout
+bindsym $mod+s fullscreen toggle
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+r layout toggle split
+
+### ======================= Window Rules ======================= ###
+
+# Assign pplications to Workspaces
+assign [class="^Alacritty$"] 1
+assign [class="^Google-chrome$"] 2
+assign [class="^AyuGramDesktop$"] 3
+
+# Floating and specific Rules for Windows
+for_window [instance="^.*Picture in picture$"] floating enable, sticky enable, resize set 640 360, move position 1920 0
+for_window [class="^.MEGAsync$"] floating enable
+
+# for_window [title="Picture in picture"] floating enable, sticky enable
+# for_window [app_id="^(float)$"] floating enable
+
+### ======================= Autostart ======================= ###
+exec {
+    alacritty -e zsh -c "tmux has-session -t WORKFLOW 2>/dev/null && tmux attach -t WORKFLOW || tmux new-session -s WORKFLOW -n 'zsh' 'zsh -i'"
+    google-chrome-stable --enable-features=UseOzonePlatform --ozone-platform=wayland
+    ayugram-desktop
+    sh -c "redshift"
+}
+
+### ======================= Applications ======================= ###
+
+# Terminal
+bindsym $mod+Return exec alacritty
+
+# Browser
+bindsym $mod+w exec google-chrome-stable --enable-features=UseOzonePlatform --ozone-platform=wayland
+
+# Launcher
+bindsym $mod+e exec wofi --show drun
+
+# Zoom
+bindsym $mod+z exec ~/.local/bin/boomer
+
+# Wifi
+bindsym $mod+F7 exec sh ~/.local/scripts/rofi-wifi-menu
+
+# Music player
+bindsym $mod+m exec alacritty -e "ncmpcpp"
+
+# Music control
+bindsym $mod+F9 exec sh ~/.local/scripts/mpctrl --toggle
+bindsym $mod+F11 exec sh ~/.local/scripts/mpctrl --up
+bindsym $mod+F10 exec sh ~/.local/scripts/mpctrl --down
+bindsym Control+F11 exec sh ~/.local/scripts/mpctrl --next
+bindsym Control+F10 exec sh ~/.local/scripts/mpctrl --prev
+
+# Screenshot
+bindsym $mod+equal exec sh ~/.local/scripts/scrshot --save
+bindsym $mod+minus exec sh ~/.local/scripts/scrshot --clipboard
+bindsym $mod+backslash exec sh ~/.local/scripts/scrshot --full
+
+# Microphone Toggle
+bindsym $mod+grave exec sh ~/.local/scripts/mic && $refresh_i3status
+
+# Audio
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+
