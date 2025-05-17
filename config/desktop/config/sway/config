@@ -26,14 +26,22 @@ set $ws0 "0"
 # Mod Key (Super/Win)
 set $mod Mod1
 
+# Colors
+client.focused          #7aa2f7 #414868 #ffffff
+client.focused_inactive #414868 #1f2335 #a9b1d6
+client.unfocused        #24283b #1a1b26 #737aa2
+client.urgent           #ff5555 #1a1b26 #ffffff
+client.placeholder      #1a1b26 #1a1b26 #ffffff
+
 ### ======================= Input/Output ======================= ###
-input * {
+input type:keyboard {
     xkb_layout "us,ru"
     xkb_options "grp:caps_toggle"
     repeat_rate 70
     repeat_delay 180
-    tap enabled
-    natural_scroll false
+}
+
+input type:pointer {
 }
 
 seat * {
@@ -42,14 +50,14 @@ seat * {
 
 output * {
     mode 1920x1080@144Hz
+    #bg ~/Pictures/wallpaper.png fill
 }
 
 ### ======================= Key Bindings ======================= ###
 # System
 bindsym $mod+Control+c swaymsg reload
-bindsym $mod+Control+r swaymsg restart
 bindsym $mod+Control+q swaymsg exit
-bindsym $mod+q swaymsg kill
+bindsym $mod+q kill
 
 # Workspaces
 bindsym $mod+1 workspace $ws1
@@ -113,6 +121,13 @@ exec {
     ayugram-desktop
     sh -c "redshift"
 }
+
+exec systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP DISPLAY SWAYSOCK
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP DISPLAY SWAYSOCK
+exec systemctl --user start xdg-desktop-portal
+
+exec waybar
+exec mako
 
 ### ======================= Applications ======================= ###
 
