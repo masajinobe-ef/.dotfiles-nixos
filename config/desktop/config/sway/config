@@ -134,34 +134,9 @@ bindsym $mod+Return exec alacritty
 bindsym $mod+w exec google-chrome-stable
 
 # Launcher
-bindsym $mod+e exec wofi --show drun
-
-# Zoom
-bindsym $mod+z exec ~/.local/bin/boomer
-
-# Wifi
-bindsym $mod+F7 exec sh ~/.local/scripts/rofi-wifi-menu
-
-# Music player
-bindsym $mod+m exec alacritty -e "ncmpcpp"
-
-# Music control
-bindsym $mod+F9 exec sh ~/.local/scripts/mpctrl --toggle
-bindsym $mod+F11 exec sh ~/.local/scripts/mpctrl --up
-bindsym $mod+F10 exec sh ~/.local/scripts/mpctrl --down
-bindsym Control+F11 exec sh ~/.local/scripts/mpctrl --next
-bindsym Control+F10 exec sh ~/.local/scripts/mpctrl --prev
-
-# Screenshot
-bindsym $mod+equal exec sh ~/.local/scripts/scrshot --save
-bindsym $mod+minus exec sh ~/.local/scripts/scrshot --clipboard
-bindsym $mod+backslash exec sh ~/.local/scripts/scrshot --full
-
-# Microphone Toggle
-bindsym $mod+grave exec sh ~/.local/scripts/mic && $refresh_i3status
+bindsym $mod+e exec rofi -show combi -combi-modes drun
 
 # Audio
 bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
 bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
 bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
-
